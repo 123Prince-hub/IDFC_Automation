@@ -5,11 +5,9 @@ import pytesseract
 from time import sleep
 import os
 
-
 ws = xw.Book(r'card_detail.xlsx').sheets("data")
 rows = ws.range("A2").expand().options(numbers=int).value
 driver = webdriver.Chrome(executable_path="C:\Program Files (x86)\chromedriver.exe")
-# driver = webdriver.Firefox(executable_path="C:\Program Files (x86)\geckodriver.exe")
 
 num = 2
 for row in rows:
@@ -23,11 +21,7 @@ for row in rows:
     mm = exp_date[0:2]
     yy = exp_date[5:]
     expiry = exp_date.replace("/", "-")
-    expiry = str(expiry)
-    # print(expiry)
-    # print(type(expiry))
-    # exit()
-    
+    expiry = str(expiry)    
 
     driver.get('https://reporting.idfcfirstbank.com/QuickPay/QPInfo_Customer.aspx')
 
@@ -53,8 +47,6 @@ for row in rows:
     driver.switch_to.window(driver.window_handles[0])
     captchaInput = driver.find_element_by_id('txtCaptcha').send_keys(a)
     button = driver.find_element_by_xpath('//input[@type="submit"]').click()
-
-
 
 
     try:
@@ -123,20 +115,21 @@ for row in rows:
         authentication = driver.find_element_by_xpath('//*[@id="tab-B-label"]/span').click()
         sleep(2)
         
-        # exp_date2 = driver.find_element_by_xpath('//b[contains(text(), "Expiry Date")]//following::input').send_keys(expiry) 
         exp_date2 = driver.execute_script("document.getElementById('expDate').value= '"+expiry+"'") 
         Pin_Number = driver.find_element_by_xpath('//b[contains(text(), "Pin Number")]//following::input').send_keys(row[5]) 
         button = driver.find_element_by_xpath('//*[@id="submitButtonIdForPin"]').click()
 
         sleep(30)
         Transaction_Reference_No = driver.find_element_by_xpath('//div[contains(text(), "Transaction Reference No")]//following::span').text
-        print(Transaction_Reference_No)
+        Transaction_status = driver.find_element_by_xpath('//div[contains(text(), "Transaction Status")]//following::span').text
+        if "Successful" in Transaction_status:
+            ws.range("G"+str(num)).value = Transaction_Reference_No
+            ws.range("H"+str(num)).value = "Success"
+        else:
+            ws.range("G"+str(num)).value = Transaction_Reference_No
+            ws.range("H"+str(num)).value = "Pending"
 
-        ws.range("G"+str(num)).value = Transaction_Reference_No
-        sleep(100)
-        # ws.range("L"+str(num)).value = "Success"
-
-    # num = num + 1 
+    num = num + 1 
 
 
-# driver.close()
+driver.close()
