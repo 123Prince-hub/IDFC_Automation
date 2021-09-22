@@ -8,7 +8,7 @@ import os
 ws = xw.Book(r'card_detail.xlsx').sheets("data")
 rows = ws.range("A2").expand().options(numbers=int).value
 driver = webdriver.Chrome(executable_path="C:\Program Files (x86)\chromedriver.exe")
-
+ 
 num = 2
 for row in rows:
     row[0] = int(row[0])
@@ -16,6 +16,32 @@ for row in rows:
     row[2] = int(row[2])
     row[4] = int(row[4])
     row[5] = int(row[5])
+
+    if ((row[0]==None) or (type(row[0])) != int) :
+        progress = "Invalid account number in sheet"
+        ws.range("M"+str(num)).value = progress
+        exit()
+
+    if ((row[1]==None) or (type(row[1])) != int):
+        progress = "Invalid amount in sheet"
+        ws.range("M"+str(num)).value = progress
+        exit()
+
+    if ((row[2]==None) or (type(row[2])) != int):
+        progress = "Card Number invalid in sheet"
+        ws.range("M"+str(num)).value = progress
+        exit()
+
+    if ((row[4]==None) or (type(row[4])) != int):
+        progress = "invalid CVV in sheet"
+        ws.range("M"+str(num)).value = progress
+        exit()
+
+    if ((row[5]==None) or (type(row[5])) != int):
+        progress = "invalid ATM PIN in sheet"
+        ws.range("M"+str(num)).value = progress
+        exit()
+
 
     exp_date = row[3]
     mm = exp_date[0:2]
@@ -33,21 +59,20 @@ for row in rows:
 
     driver.switch_to.window(driver.window_handles[1])
     driver.get(image_link)
-    driver.find_element_by_xpath('/html/body/img').screenshot('captcha.png')
+    driver.find_element_by_xpath('/html/body/img').screenshot('img.png')
 
-    img = Image.open('captcha.png')
+    img = Image.open('img.png')
     imgGray = img.convert('L')
-    imgGray.save('captcha.png')
+    imgGray.save('img.png')
 
     pytesseract.pytesseract.tesseract_cmd = r'C:\Program Files\Tesseract-OCR\tesseract'
-    a = pytesseract.image_to_string(r'captcha.png').strip()
+    a = pytesseract.image_to_string(r'img.png').strip()
     a = a.replace("(", "j")
     driver.close()
     sleep(1)
     driver.switch_to.window(driver.window_handles[0])
     captchaInput = driver.find_element_by_id('txtCaptcha').send_keys(a)
     button = driver.find_element_by_xpath('//input[@type="submit"]').click()
-
 
     try:
         sleep(1)
@@ -62,14 +87,14 @@ for row in rows:
 
             driver.switch_to.window(driver.window_handles[1])
             driver.get(image_link)
-            driver.find_element_by_xpath('/html/body/img').screenshot('captcha.png')
+            driver.find_element_by_xpath('/html/body/img').screenshot('img.png')
 
-            img = Image.open('captcha.png')
+            img = Image.open('img.png')
             imgGray = img.convert('L')
-            imgGray.save('captcha.png')
+            imgGray.save('img.png')
 
             pytesseract.pytesseract.tesseract_cmd = r'C:\Program Files\Tesseract-OCR\tesseract'
-            a = pytesseract.image_to_string(r'captcha.png').strip()
+            a = pytesseract.image_to_string(r'img.png').strip()
             a = a.replace("(", "j")
             driver.close()
             sleep(1)
@@ -77,10 +102,10 @@ for row in rows:
             captchaInput = driver.find_element_by_id('txtCaptcha').send_keys(a)
             button = driver.find_element_by_xpath('//input[@type="submit"]').click()
             sleep(1)
-            i = i + 1
+            i+= 1
         
     except:
-        os.remove('captcha.png')
+        os.remove('img.png')
 
         sleep(2)
         Pay_Now = driver.find_element_by_xpath('//input[@type="submit"]').click()
