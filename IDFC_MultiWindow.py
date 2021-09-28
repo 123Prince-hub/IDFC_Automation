@@ -2,7 +2,7 @@ from multiprocessing.pool import ThreadPool as Pool
 from selenium import webdriver
 import xlwings as xw
 import time
-import os, easyocr
+
 
 start_time = time.time()
 
