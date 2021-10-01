@@ -1,15 +1,18 @@
 from selenium import webdriver
 import xlwings as xw
 from time import sleep
+from webdriver_manager.chrome import ChromeDriverManager
 
 ws = xw.Book(r'card_detail.xlsx').sheets("data")
 rows = ws.range("A2").expand().options(numbers=int).value
 
-driver = webdriver.Chrome(executable_path="C:\Program Files (x86)\chromedriver.exe")
+account = rows[0][0]
+driver = webdriver.Chrome(ChromeDriverManager().install())
+driver.implicitly_wait(60)
 driver.maximize_window()
 driver.get('https://reporting.idfcfirstbank.com/QuickPay/QPInfo_Customer.aspx')
-account = driver.find_element_by_xpath("//a[contains(text(), 'Account Number')]//following::input").send_keys("49121607")
-sleep(60)
+account = driver.find_element_by_xpath("//a[contains(text(), 'Account Number')]//following::input").send_keys(account)
+sleep(10)
  
 num = 2
 for row in rows:
@@ -43,7 +46,7 @@ for row in rows:
             cvv = driver.find_element_by_xpath('//span[contains(text(), "CVV")]//following::input').send_keys(row[4]) 
             button = driver.find_element_by_xpath('//span[contains(text(), "PAY")]').click()
 
-            sleep(15)
+            # sleep(15)
             authentication = driver.find_element_by_xpath('//*[contains(text(),"ATM PIN")]').click()            
             exp_date2 = driver.execute_script("document.getElementById('expDate').value= '"+expiry+"'") 
             Pin_Number = driver.find_element_by_xpath('//b[contains(text(), "Pin Number")]//following::input').send_keys(row[5]) 
