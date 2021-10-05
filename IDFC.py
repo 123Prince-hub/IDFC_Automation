@@ -1,6 +1,6 @@
-from selenium import webdriver
 import xlwings as xw
 from time import sleep
+from selenium import webdriver
 from webdriver_manager.chrome import ChromeDriverManager
 
 ws = xw.Book(r'card_detail.xlsx').sheets("data")
@@ -12,7 +12,7 @@ driver.implicitly_wait(60)
 driver.maximize_window()
 driver.get('https://reporting.idfcfirstbank.com/QuickPay/QPInfo_Customer.aspx')
 account = driver.find_element_by_xpath("//a[contains(text(), 'Account Number')]//following::input").send_keys(account)
-sleep(10)
+sleep(60)
  
 num = 2
 for row in rows:
@@ -30,29 +30,26 @@ for row in rows:
             
             Pay_Now = driver.find_element_by_xpath('//input[@type="submit"]').click()
 
-            sleep(1)
             amount = driver.find_element_by_xpath('//p[contains(text(), "Enter the amount you want to pay")]//following::input').send_keys(row[1])
             Payment_option = driver.find_element_by_xpath('/html/body/form/div[3]/div[2]/div/div/div[3]/div[5]/div[2]/div/label/span/img').click()
             button = driver.find_element_by_xpath('//button[contains(text(),"Make Payment")]').click() 
-            sleep(1)
             checkbox = driver.find_element_by_xpath('//input[@type="checkbox"]').click()
             button2 = driver.find_element_by_xpath('//*[contains(text(),"Confirm Payment")]').click() 
 
-            sleep(1)
             payment_method = driver.find_element_by_xpath('//span[contains(text(), "Debit Card")]').click() 
             card_number = driver.find_element_by_xpath('//span[contains(text(), "Card Number")]//following::input').send_keys(row[2]) 
             exp_mm = driver.find_element_by_xpath('//span[contains(text(), "Card Expiry Date")]//following::input').send_keys(mm) 
-            exp_yy = driver.find_element_by_xpath('//span[contains(text(), "Card Expiry Date")]//following::input[2]').send_keys(yy) 
+            exp_yy = driver.find_element_by_xpath('//span[contains(text(), "Card Expiry Date")]//following::input[2]').send_
+            keys(yy) 
             cvv = driver.find_element_by_xpath('//span[contains(text(), "CVV")]//following::input').send_keys(row[4]) 
             button = driver.find_element_by_xpath('//span[contains(text(), "PAY")]').click()
 
-            # sleep(15)
             authentication = driver.find_element_by_xpath('//*[contains(text(),"ATM PIN")]').click()            
             exp_date2 = driver.execute_script("document.getElementById('expDate').value= '"+expiry+"'") 
             Pin_Number = driver.find_element_by_xpath('//b[contains(text(), "Pin Number")]//following::input').send_keys(row[5]) 
             button = driver.find_element_by_xpath('//*[@id="submitButtonIdForPin"]').click()
 
-            sleep(30)
+            sleep(40)
             Transaction_Reference_No = driver.find_element_by_xpath('//div[contains(text(), "Transaction Reference No")]//following::span').text
             Transaction_status = driver.find_element_by_xpath('//div[contains(text(), "Transaction Status")]//following::span').text
             if "Successful" in Transaction_status:
