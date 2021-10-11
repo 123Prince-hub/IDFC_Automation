@@ -6,7 +6,6 @@ from webdriver_manager.chrome import ChromeDriverManager
 
 pool_size = 5
 
-
 num = 2 
 
 ws = xw.Book(r'card_detail.xlsx').sheets("data")
@@ -21,7 +20,7 @@ def automation(row, num, ws):
             driver.implicitly_wait(80)
             driver.maximize_window()
             url = driver.get('https://reporting.idfcfirstbank.com/QuickPay/QPInfo_Customer.aspx')
-            account = driver.find_element_by_xpath("//a[contains(text(), 'Account Number')]//following::input").send_keys("49121607")
+            account = driver.find_element_by_xpath("//a[contains(text(), 'Account Number')]//following::input").send_keys(row[0])
             tim = time.sleep(100)
 
             # if num == 3:

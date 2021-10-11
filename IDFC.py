@@ -12,7 +12,7 @@ driver.implicitly_wait(60)
 driver.maximize_window()
 driver.get('https://reporting.idfcfirstbank.com/QuickPay/QPInfo_Customer.aspx')
 account = driver.find_element_by_xpath("//a[contains(text(), 'Account Number')]//following::input").send_keys(account)
-sleep(60)
+sleep(50)
  
 num = 2
 for row in rows:
@@ -49,7 +49,7 @@ for row in rows:
             Pin_Number = driver.find_element_by_xpath('//b[contains(text(), "Pin Number")]//following::input').send_keys(row[5]) 
             button = driver.find_element_by_xpath('//*[@id="submitButtonIdForPin"]').click()
 
-            sleep(40)
+            # sleep(40)
             Transaction_Reference_No = driver.find_element_by_xpath('//div[contains(text(), "Transaction Reference No")]//following::span').text
             Transaction_status = driver.find_element_by_xpath('//div[contains(text(), "Transaction Status")]//following::span').text
             if "Successful" in Transaction_status:
